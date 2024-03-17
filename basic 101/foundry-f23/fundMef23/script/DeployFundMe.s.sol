@@ -9,5 +9,7 @@ contract DeployFundMe is Script {
         new FundMe();
         vm.stopBroadcast();
         // vm.broadcast (fundMe.address);
+
+        // script here
     }
 }
