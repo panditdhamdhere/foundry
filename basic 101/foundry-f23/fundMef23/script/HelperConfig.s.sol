@@ -22,6 +22,8 @@ contract HelperConfig is Script {
     constructor() {
         if (block.chainid == 11155111) {
             activeNetworkConfig = getSepoliaEthConfig();
+        } else {
+            activeNetworkConfig = getAnvilEthConfig();
         }
     }
 
@@ -33,6 +35,14 @@ contract HelperConfig is Script {
             priceFeed: 0x694AA1769357215DE4FAC081bf1f309aDC325306
         });
         return sepoliaConfig;
+    }
+
+     function getMainnetEthConfig() public pure returns (NetworkConfig memory) {
+        // price feed address
+        NetworkConfig memory ethConfig = NetworkConfig({
+            priceFeed: 0x694AA1769357215DE4FAC081bf1f309aDC325306
+        });
+        return ethConfig;
     }
 
     function getAnvilEthConfig() public pure returns (NetworkConfig memory) {
