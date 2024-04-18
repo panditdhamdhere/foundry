@@ -4,3 +4,5 @@
 [submodule "basic 101/foundry-f23/fundMef23/lib/chainlink-brownie-contracts"]
 	path = basic 101/foundry-f23/fundMef23/lib/chainlink-brownie-contracts
 	url = https://github.com/smartcontractkit/chainlink-brownie-contracts
+[submodule "basic 101/foundry-f23/lottery-f23/lib/forge-std"]
+	path = basic 101/foundry-f23/lottery-f23/lib/forge-std
