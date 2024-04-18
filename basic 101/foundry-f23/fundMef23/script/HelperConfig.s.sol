@@ -23,11 +23,9 @@ contract HelperConfig is Script {
     constructor() {
         if (block.chainid == 11155111) {
             activeNetworkConfig = getSepoliaEthConfig();
-        } else if(block.chainid == 1) {
+        } else if (block.chainid == 1) {
             activeNetworkConfig = getMainnetEthConfig();
-        }
-        
-        else {
+        } else {
             activeNetworkConfig = getAnvilEthConfig();
         }
     }
@@ -42,7 +40,7 @@ contract HelperConfig is Script {
         return sepoliaConfig;
     }
 
-     function getMainnetEthConfig() public pure returns (NetworkConfig memory) {
+    function getMainnetEthConfig() public pure returns (NetworkConfig memory) {
         // price feed address
         NetworkConfig memory ethConfig = NetworkConfig({
             priceFeed: 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419
@@ -53,14 +51,14 @@ contract HelperConfig is Script {
     function getAnvilEthConfig() public returns (NetworkConfig memory) {
         // price feed address
 
-        // deploy the mocks 
+        // deploy the mocks
         // return the mock addresses
         vm.startBroadcast();
-MockV3Aggregator mockPriceFeed = new MockV3Aggregator(8, 2000e8);
+        MockV3Aggregator mockPriceFeed = new MockV3Aggregator(8, 2000e8);
         vm.startBroadcast();
-NetworkConfig memory anvilConfig = NetworkConfig({
-    priceFeed: address(mockPriceFeed)
-});
-return anvilConfig;
+        NetworkConfig memory anvilConfig = NetworkConfig({
+            priceFeed: address(mockPriceFeed)
+        });
+        return anvilConfig;
     }
 }
