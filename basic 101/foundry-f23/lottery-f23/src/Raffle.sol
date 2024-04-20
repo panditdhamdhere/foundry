@@ -23,6 +23,7 @@
 pragma solidity ^0.8.19;
 
 import {VRFCoordinatorV2Interface} from "@chainlink/contracts/src/v0.8/vrf/interfaces/VRFCoordinatorV2Interface.sol";
+import {VRFConsumerBaseV2} from "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol";
 
 /**
  * @title -> A Sample Raffle smart Contract
@@ -30,7 +31,7 @@ import {VRFCoordinatorV2Interface} from "@chainlink/contracts/src/v0.8/vrf/inter
  *@notice -> This contract is for creating a sample raffle
  *@dev -> Implements Chainlink VRFv2
  */
-contract Raffle {
+contract Raffle is VRFConsumerBaseV2 {
     // coustom errors
     error Raffle__NotEnoughEthSent();
 
@@ -48,6 +49,7 @@ contract Raffle {
 
     address payable[] private s_players;
     uint256 private s_lastTimeStamp;
+    address private s_recentWinner;
 
     // events
     // whenever we do storage update we should emit an event
@@ -61,7 +63,7 @@ contract Raffle {
         bytes32 gasLane,
         uint64 subscriptionId,
         uint32 callbackGasLimit
-    ) {
+    ) VRFConsumerBaseV2(vrfCoordinator) {
         i_entranceFee = entranceFee;
         i_interval = interval;
         s_lastTimeStamp = block.timestamp;
@@ -98,6 +100,19 @@ contract Raffle {
             i_callbackGasLimit,
             NUM_WORDS
         );
+    }
+
+    function fulfillRandomWords(
+        uint256 requestId,
+        uint256[] memory randomWords
+    ) internal override {
+        uint256 indexOfWinner = randomWords[0] % s_players.length;
+        address payable winner = s_players[indexOfWinner];
+        s_recentWinner = winner;
+        (bool success, ) = winner.call{value: address(this).balance}("");
+        if (!success) {
+            revert();
+        }
     }
 
     /**Getter Functions */
