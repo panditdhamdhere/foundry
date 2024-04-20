@@ -34,6 +34,15 @@ import {VRFConsumerBaseV2} from "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBa
 contract Raffle is VRFConsumerBaseV2 {
     // coustom errors
     error Raffle__NotEnoughEthSent();
+    error Raffle__TransactionFailed();
+    error Raffle__RaffleNotOpen();
+
+    // type Declaration
+
+    enum RaffleState {
+        OPEN,
+        CALCULATING
+    }
 
     // constant variables
     uint16 private constant REQUEST_CONFIRMATION = 3;
@@ -50,6 +59,7 @@ contract Raffle is VRFConsumerBaseV2 {
     address payable[] private s_players;
     uint256 private s_lastTimeStamp;
     address private s_recentWinner;
+    RaffleState private s_raffleState;
 
     // events
     // whenever we do storage update we should emit an event
@@ -71,6 +81,8 @@ contract Raffle is VRFConsumerBaseV2 {
         i_gasLane = gasLane;
         i_subscriptionId = subscriptionId;
         i_callbackGasLimit = callbackGasLimit;
+
+        s_raffleState = RaffleState.OPEN;
     }
 
     function enterRaffle() external payable {
@@ -79,6 +91,10 @@ contract Raffle is VRFConsumerBaseV2 {
         // revert with custom errors are more gas efficiant than require with conditions;
         if (msg.value < i_entranceFee) {
             revert Raffle__NotEnoughEthSent();
+        }
+
+        if (s_raffleState != RaffleState.OPEN) {
+            revert Raffle__RaffleNotOpen();
         }
         s_players.push(payable(msg.sender));
     }
@@ -93,6 +109,7 @@ contract Raffle is VRFConsumerBaseV2 {
             revert();
         }
 
+s_raffleState = RaffleState.CALCULATING;
         uint256 requestId = i_vrfCoordinator.requestRandomWords(
             i_gasLane,
             i_subscriptionId,
@@ -109,9 +126,10 @@ contract Raffle is VRFConsumerBaseV2 {
         uint256 indexOfWinner = randomWords[0] % s_players.length;
         address payable winner = s_players[indexOfWinner];
         s_recentWinner = winner;
+        s_raffleState = RaffleState.OPEN;
         (bool success, ) = winner.call{value: address(this).balance}("");
         if (!success) {
-            revert();
+            revert Raffle__TransactionFailed();
         }
     }
 
