@@ -65,6 +65,8 @@ contract Raffle is VRFConsumerBaseV2 {
     // whenever we do storage update we should emit an event
     // 1. events make migration easy
     // 2. frontend indexing easier !
+    event EnteredRaffle(address indexed player);
+    event PickedWinner(address indexed winner);
 
     constructor(
         uint256 entranceFee,
@@ -109,7 +111,7 @@ contract Raffle is VRFConsumerBaseV2 {
             revert();
         }
 
-s_raffleState = RaffleState.CALCULATING;
+        s_raffleState = RaffleState.CALCULATING;
         uint256 requestId = i_vrfCoordinator.requestRandomWords(
             i_gasLane,
             i_subscriptionId,
@@ -123,14 +125,23 @@ s_raffleState = RaffleState.CALCULATING;
         uint256 requestId,
         uint256[] memory randomWords
     ) internal override {
+        // checks require(if->error)
+        // effects (our own contract)
+        // interactions
         uint256 indexOfWinner = randomWords[0] % s_players.length;
         address payable winner = s_players[indexOfWinner];
         s_recentWinner = winner;
         s_raffleState = RaffleState.OPEN;
+        s_players = new address payable[](0);
+        s_lastTimeStamp = block.timestamp;
+        emit PickedWinner(winner);
+
         (bool success, ) = winner.call{value: address(this).balance}("");
         if (!success) {
             revert Raffle__TransactionFailed();
         }
+
+        emit PickedWinner(winner);
     }
 
     /**Getter Functions */
