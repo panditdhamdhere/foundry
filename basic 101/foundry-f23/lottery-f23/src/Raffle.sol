@@ -101,6 +101,18 @@ contract Raffle is VRFConsumerBaseV2 {
         s_players.push(payable(msg.sender));
     }
 
+    // when the winner supposed to be picked
+    /*
+      @dev THis is the function that the Chainlink Automataion nodes call to see if its time to perform an upKeep.
+     * @param null
+     * @return upkeepNeeded
+     * @
+     */
+
+    function checkUpKeep(
+        bytes memory /*checkData*/
+    ) public view returns (bool upkeepNeeded, bytes memory /* performData */) {}
+
     // 1. get a random number
     // 2. Use the random number to pick the winner
     // 3. Be automatocally called
