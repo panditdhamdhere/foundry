@@ -8,3 +8,5 @@
 	path = basic 101/foundry-f23/lottery-f23/lib/forge-std
 [submodule "basic 101/foundry-f23/lottery-f23/lib/chainlink-brownie-contracts"]
 	path = basic 101/foundry-f23/lottery-f23/lib/chainlink-brownie-contracts
+[submodule "basic 101/foundry-f23/lottery-f23/lib/foundry-devops"]
+	path = basic 101/foundry-f23/lottery-f23/lib/foundry-devops
