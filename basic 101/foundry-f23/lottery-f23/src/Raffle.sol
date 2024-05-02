@@ -72,6 +72,7 @@ contract Raffle is VRFConsumerBaseV2 {
     // 2. frontend indexing easier !
     event EnteredRaffle(address indexed player);
     event PickedWinner(address indexed winner);
+event RequestedRaffleWinner(uint256 indexed requestId);
 
     constructor(
         uint256 entranceFee,
@@ -152,6 +153,7 @@ contract Raffle is VRFConsumerBaseV2 {
             i_callbackGasLimit,
             NUM_WORDS
         );
+        emit RequestedRaffleWinner(requestId);
     }
 
     function fulfillRandomWords(
