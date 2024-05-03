@@ -192,4 +192,16 @@ event RequestedRaffleWinner(uint256 indexed requestId);
     function getPlayer(uint256 indexOfPlayer ) external v iew returns (address) {
         return s_players[indexOfPlayer];
     } 
+
+    function getRecentWinner() external view returns (address) {
+        return s_recentWinner;
+    }
+
+    function getLengthOfPlayers() external view returns(uint){
+        return s_players.length;
+    }
+
+    function getLastTimeStamp() external view returns(uint){
+        return s_lastTimeStamp;
+    }
 }
