@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 pub use alloy_evm::EvmEnv;
 use alloy_primitives::{Address, B256, Bytes, U256};
 use revm::{
@@ -211,7 +213,7 @@ impl FoundryTransaction for TxEnv {
 
 /// Extension of [`Cfg`] with mutable setters, allowing EVM-agnostic mutation of EVM configuration
 /// fields.
-pub trait FoundryCfg: Cfg {
+pub trait FoundryCfg: Cfg<Spec: Debug> {
     /// Sets the EVM spec (hardfork).
     fn set_spec(&mut self, spec: Self::Spec);
 
@@ -237,7 +239,7 @@ pub trait FoundryCfg: Cfg {
     fn set_tx_gas_limit_cap(&mut self, cap: Option<u64>);
 }
 
-impl<S: Into<SpecId> + Clone> FoundryCfg for CfgEnv<S> {
+impl<S: Into<SpecId> + Clone + Debug> FoundryCfg for CfgEnv<S> {
     fn set_spec(&mut self, spec: S) {
         self.spec = spec;
     }
