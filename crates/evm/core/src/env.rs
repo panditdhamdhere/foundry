@@ -228,17 +228,36 @@ pub trait FoundryContextExt:
     fn tx_mut(&mut self) -> &mut Self::Tx;
     /// Mutable reference to the configuration environment.
     fn cfg_mut(&mut self) -> &mut Self::Cfg;
-    /// Sets block environment
+    /// Sets block environment.
     fn set_block(&mut self, block: Self::Block) {
         *self.block_mut() = block;
     }
-    /// Sets transaction environment
+    /// Sets transaction environment.
     fn set_tx(&mut self, tx: Self::Tx) {
         *self.tx_mut() = tx;
     }
-    /// Sets configuration environment
+    /// Sets configuration environment.
     fn set_cfg(&mut self, cfg: Self::Cfg) {
         *self.cfg_mut() = cfg;
+    }
+    /// Sets EVM environment.
+    fn set_evm(&mut self, evm_env: EvmEnv<<Self::Cfg as FoundryCfg>::Spec, Self::Block>)
+    where
+        Self::Cfg: From<CfgEnv<<Self::Cfg as FoundryCfg>::Spec>>,
+    {
+        *self.cfg_mut() = evm_env.cfg_env.into();
+        *self.block_mut() = evm_env.block_env;
+    }
+    /// Cloned transaction environment.
+    fn tx_clone(&self) -> Self::Tx {
+        self.tx().clone()
+    }
+    /// Cloned EVM environment (Cfg + Block).
+    fn evm_clone(&self) -> EvmEnv<<Self::Cfg as FoundryCfg>::Spec, Self::Block>
+    where
+        Self::Cfg: Into<CfgEnv<<Self::Cfg as FoundryCfg>::Spec>>,
+    {
+        EvmEnv::new(self.cfg().clone().into(), self.block().clone())
     }
 }
 
